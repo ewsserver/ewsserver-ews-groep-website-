@@ -9,9 +9,9 @@ from translations import LANGUAGES
 
 ROOT = Path(__file__).resolve().parent
 OUT = ROOT / "dist"
-SITE_URL = environ.get("SITE_URL", "https://ews-groep-website.server-a54.workers.dev").rstrip("/")
+SITE_URL = environ.get("SITE_URL", "").strip().rstrip("/")
 site_origin = urlsplit(SITE_URL)
-if site_origin.scheme not in ("https", "http") or not site_origin.netloc or site_origin.path or site_origin.query or site_origin.fragment:
+if SITE_URL and (site_origin.scheme not in ("https", "http") or not site_origin.netloc or site_origin.path or site_origin.query or site_origin.fragment):
     raise ValueError("SITE_URL must be a complete website origin, without a path or query.")
 
 PATHS = {
@@ -89,9 +89,11 @@ def page(route, title, desc, active, content, stylesheet=""):
     for language in LANGUAGES:
         dest = OUT / localized_url(route, language).strip("/") / "index.html"
         dest.parent.mkdir(parents=True, exist_ok=True)
-        alternates = ''.join(f'<link rel="alternate" hreflang="{code}" href="{SITE_URL}{localized_url(route, code)}">' for code in LANGUAGES)
-        alternates += f'<link rel="alternate" hreflang="x-default" href="{SITE_URL}{route}">'
-        canonical = f'<link rel="canonical" href="{SITE_URL}{localized_url(route, language)}">'
+        alternates = canonical = ''
+        if SITE_URL:
+            alternates = ''.join(f'<link rel="alternate" hreflang="{code}" href="{SITE_URL}{localized_url(route, code)}">' for code in LANGUAGES)
+            alternates += f'<link rel="alternate" hreflang="x-default" href="{SITE_URL}{route}">'
+            canonical = f'<link rel="canonical" href="{SITE_URL}{localized_url(route, language)}">'
         source = f'''<!doctype html>
 <html lang="nl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{escape(title)} | EWS Groep</title>
 <meta name="description" content="{escape(desc)}"><meta name="theme-color" content="#0097b2"><link rel="icon" href="/media/favicon.png">

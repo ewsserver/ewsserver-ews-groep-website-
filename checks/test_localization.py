@@ -55,11 +55,11 @@ class LocalizationTests(unittest.TestCase):
                     self.assertEqual(sum(tag == 'h1' for tag, _ in page.tags), 1)
                     self.assertTrue(any(tag == 'meta' and attrs.get('name') == 'description' and attrs.get('content') for tag, attrs in page.tags))
                     alternatives = {attrs['hreflang'] for tag, attrs in page.tags if tag == 'link' and attrs.get('rel') == 'alternate'}
-                    self.assertEqual(alternatives, {*LANGUAGES, 'x-default'})
-                    canonical = next(attrs['href'] for tag, attrs in page.tags if tag == 'link' and attrs.get('rel') == 'canonical')
-                    self.assertEqual(canonical, SITE_URL + page_url)
+                    self.assertEqual(alternatives, {*LANGUAGES, 'x-default'} if SITE_URL else set())
+                    canonical = [attrs['href'] for tag, attrs in page.tags if tag == 'link' and attrs.get('rel') == 'canonical']
+                    self.assertEqual(canonical, [SITE_URL + page_url] if SITE_URL else [])
                     alternate_urls = {attrs['hreflang']: attrs['href'] for tag, attrs in page.tags if tag == 'link' and attrs.get('rel') == 'alternate'}
-                    self.assertEqual(alternate_urls, {**{code: SITE_URL + localized_url(route, code) for code in LANGUAGES}, 'x-default': SITE_URL + route})
+                    self.assertEqual(alternate_urls, {**{code: SITE_URL + localized_url(route, code) for code in LANGUAGES}, 'x-default': SITE_URL + route} if SITE_URL else {})
                     switchers = {attrs['data-language']: attrs['href'] for tag, attrs in page.tags if 'data-language' in attrs}
                     self.assertEqual(switchers, {code: localized_url(route, code) for code in LANGUAGES})
                     copy = json.loads(page.scripts[0])
