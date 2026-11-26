@@ -1,7 +1,7 @@
 import { defineConfig } from "cf/config";
 
 export default defineConfig({
-  accountId: "a542d2fbbdbb308d5dc826632b944bef",
+  // Cloudflare Builds supplies the account through CLOUDFLARE_ACCOUNT_ID.
   worker: {
     name: "ews-groep-website",
     compatibilityDate: "2026-11-26",
