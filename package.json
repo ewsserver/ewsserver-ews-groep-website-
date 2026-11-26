@@ -1,0 +1,19 @@
+{
+  "name": "ews-groep-website",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "python3 build.py",
+    "test": "python3 checks/test_localization.py && node checks/test-contact.cjs",
+    "deploy": "cf deploy ./dist",
+    "check:deploy": "cf deploy ./dist --dry-run",
+    "preview": "python3 -m http.server 4173 --bind 127.0.0.1 --directory dist"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "cf": "1.0.0-rc.6"
+  }
+}
